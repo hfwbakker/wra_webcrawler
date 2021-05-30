@@ -14,9 +14,14 @@ NEXT UP:
     3) write code filter and save that data (e.g. a pandas dataframe).
     4) write code to automate reading urls from client .xlsx file (e.g. websites to check) and fetch and save that data.
     5) Output in relevant format to .xlsx file.
+- Learn selenium.
 
 
 LOG:
+--- Sunday, May 30th, 2021 ---
+- WRA does not work without JavaScript because it generates some data presumably. This means that a purely html parser such as beautifulsoup won't do the trick. Added selenium and chromedriver-binary to emulate running a page.
+- More or less managed to get a chrome window opened with selenium and managed to select an item although it returns gibberish.
+
 --- Saturday, May 29th, 2021 ---
 - Updated POA
 - Created virtual environment with python 3.9, beautifulsoup, requests, and pandas.
