@@ -1,4 +1,5 @@
 import os
+import os.path
 import selenium
 from selenium import webdriver
 import time
@@ -8,6 +9,7 @@ import requests
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import ElementClickInterceptedException
 import pandas as pd
+import pyperclip
 
 ###########################################################################
 ### SECTION 1: SCRAPING THE DATA AND PUTTING IT INTO A PANDAS DATAFRAME ###
@@ -17,37 +19,50 @@ import pandas as pd
 data = {'url':[], 'domain':[], 'host':[], 'name':[], 'stats':[]}
 df = pd.DataFrame(data)
 
-# df = df.append(new_row, ignore_index=True)
-
 # scraping logic
 def get_wra_info():
     time.sleep(15)
     
-    try:
-        search_results = driver.find_elements_by_xpath("//img[@class='_3vyrn']")
-        print("printing search results")
-        print(search_results)
-        print("Search result length:")
-        print(len(search_results))
+    search_results = driver.find_elements_by_xpath("//img[@class='_3vyrn']")
+    print("printing search results")
+    print(search_results)
+    print("Search result length:")
+    print(len(search_results))
+    domain_data = "N/A"
+    host_data = "N/A"
+    name_data = "N/A"
+    stats_data = "N/A"
 
-        new_row = {'url':"URL", 'domain':search_results[0].get_attribute('alt'), 'host':search_results[1].get_attribute('alt'), 'name':search_results[2].get_attribute('alt'), 'stats':search_results[3].get_attribute('alt')}
+    for i in search_results:
+        if "(domain)" in i.get_attribute('alt'):
+            domain_data = i.get_attribute('alt')
+        if "name |" in i.get_attribute('alt'):
+            name_data = i.get_attribute('alt')
+        if "daily page views |" in i.get_attribute('alt'):
+            stats_data = i.get_attribute('alt')
+            
+        
+    new_row = {'url':"URL", 'domain': domain_data, 'host':host_data, 'name':name_data, 'stats':stats_data}
 
-        count = 1
-        for i in search_results:
-            print(f"result {count} = {i.get_attribute('alt')}")
-            count += 1
-    
-        return new_row
+    count = 1
+    for i in search_results:
+        print(f"result {count} = {i.get_attribute('alt')}")
+        count += 1
+        
+    return new_row
 
-    except:
-        print("ERROR: Something caused an error. Perhaps your internet is loading too slowly? Increase sleep time and try again.")
-        driver.quit()
-        exit(0)
+    # except:
+    #     print("ERROR: Something caused an error. Reasons: WRA does not have info on this URL, or the page is taking too long to load.")
+    #     new_row = {'url':"N/A", 'domain': "N/A", 'host':"N/A", 'name':"N/A", 'stats':"N/A"}
+
+    #     return new_row
 
 # initialize and install / check webdriver
 driver = webdriver.Chrome(ChromeDriverManager().install())
 
-url_list = ["https://lady.gmw.cn/2021-04/25/content_34793576.htm", "www.teamliquid.net"]
+# url_list = ["https://lady.gmw.cn/2021-04/25/content_34793576.htm", "www.teamliquid.net"]
+url_list = pyperclip.paste().split()
+print(url_list)
 
 wra_url = "https://www.wolframalpha.com/input/?i={q}"
 

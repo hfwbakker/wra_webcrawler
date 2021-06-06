@@ -12,11 +12,16 @@ PROJECT:
 
 NEXT UP:
 - Regex so the number of visitors automatically becomes a useable number in output excel sheet instead of a string
-- Output to excel sheet
-- take in a list of urls and for-loop through them.
+- Final column "stats" now has long strings like "daily page views | ≈ 51000 hits/d (hits per day)... etc" -> this should be split up in seperate colums "daily page views", "daily visitors", "site rank", "domain online". All columns should contain direclty usuable numbers, not strings. Excess words (like descriptions) to be filtered out.
+- Is it possible to create some script that user can just double click that will automatically input the right commands into terminal? Like a Bash script?
 
 
 LOG:
+--- Sunday, June 6th, 2021 ---
+- Script outputs info to excel sheet.
+- Through using pyperclip the user can now copy a list of URL's from an excel file and the script will automatically read them from clipboard.
+- Script now (mostly) correctly finds which info belongs in which column, and inputs "N/A" if data is missing.
+
 --- Saturday, June 5th, 2021 ---
 - Script now fetches relevant data from WRA page.
 - Implemented a for loop that loops through a list of URLs and grabs the relevant info.
