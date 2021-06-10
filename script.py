@@ -1,22 +1,23 @@
-import os
+# import os
 import os.path
 import selenium
 from selenium import webdriver
 import time
 # from PIL import Image
-import io
-import requests
+# import io
+# import requests
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import ElementClickInterceptedException
 import pandas as pd
 import pyperclip
+import re
 
 ###########################################################################
 ### SECTION 1: SCRAPING THE DATA AND PUTTING IT INTO A PANDAS DATAFRAME ###
 ###########################################################################
 
 # pandas logic
-data = {'url':[], 'domain':[], 'host':[], 'name':[], 'stats':[]}
+data = {'url':[], 'domain':[], 'host':[], 'name':[], 'daily_page_views':[], 'daily_visitors':[], 'site_rank':[]}
 df = pd.DataFrame(data)
 
 # scraping logic
@@ -28,10 +29,13 @@ def get_wra_info():
     print(search_results)
     print("Search result length:")
     print(len(search_results))
-    domain_data = "N/A"
-    host_data = "N/A"
-    name_data = "N/A"
-    stats_data = "N/A"
+    domain_data         = "N/A"
+    host_data           = "N/A"
+    name_data           = "N/A"
+    # stats_data          = "N/A"
+    daily_page_views    = "N/A"
+    daily_visitors      = "N/A"
+    site_rank           = "N/A"
 
     for i in search_results:
         if "(domain)" in i.get_attribute('alt'):
@@ -39,10 +43,29 @@ def get_wra_info():
         if "name |" in i.get_attribute('alt'):
             name_data = i.get_attribute('alt')
         if "daily page views |" in i.get_attribute('alt'):
-            stats_data = i.get_attribute('alt')
+            stats_data = i.get_attribute('alt').splitlines()
+
+            daily_page_views    = re.findall(r'\d+', stats_data[0])[0]
+            if 'million' in stats_data[0]:
+                daily_page_views = int(daily_page_views) * 1000000
+            if 'billion' in stats_data[0]:
+                daily_page_views = int(daily_page_views) * 1000000000
+            
+            daily_visitors      = re.findall(r'\d+', stats_data[1])[0]
+            if 'million' in stats_data[1]:
+                daily_visitors = int(daily_visitors) * 1000000
+            if 'billion' in stats_data[1]:
+                daily_visitors = int(daily_visitors) * 1000000000
+            
+            site_rank           = re.findall(r'\d+', stats_data[2])[0]
             
         
-    new_row = {'url':"URL", 'domain': domain_data, 'host':host_data, 'name':name_data, 'stats':stats_data}
+    new_row = {'url':"URL", 
+               'domain': domain_data, 
+               'host':host_data, 'name':name_data, 
+               'daily_page_views': daily_page_views, 
+               'daily_visitors': daily_visitors, 
+               'site_rank': site_rank}
 
     count = 1
     for i in search_results:
@@ -87,3 +110,9 @@ while os.path.isfile(f"ouput/output{filecount}.xlsx") == True:
     filecount += 1
 df.to_excel(f"output/output{filecount}.xlsx")
 print(f"Output to 'output/output{filecount}.xlsx'")
+
+    filecount = 0
+    while os.path.isfile(f"output{filecount}.xlsx") == True:
+        filecount += 1
+    wb.save(f"output{filecount}.xlsx")
+    print(f"Saved to 'output{filecount}.xlsx")

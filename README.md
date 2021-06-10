@@ -11,12 +11,18 @@ PROJECT:
 
 
 NEXT UP:
-- Regex so the number of visitors automatically becomes a useable number in output excel sheet instead of a string
-- Final column "stats" now has long strings like "daily page views | ≈ 51000 hits/d (hits per day)... etc" -> this should be split up in seperate colums "daily page views", "daily visitors", "site rank", "domain online". All columns should contain direclty usuable numbers, not strings. Excess words (like descriptions) to be filtered out.
-- Is it possible to create some script that user can just double click that will automatically input the right commands into terminal? Like a Bash script?
+- Look at "excel_it" function in projects/python_webscraper/scraper_scripts/axios_scraper.py and create a similar function to neatly output pandas data into an excel sheet.
+- Is it possible to create some script that user can just double click that will automatically input the right commands into terminal? Like a Bash script? -> I think its called a shell script.
+- Clean up code.
 
 
 LOG:
+--- Thursday, June 10th, 2021 ---
+- Reinstalled all dependencies after having to completely reset (and repair) computer.
+- Created test_develop.py for creating code snippets to be implemented in to the main script. The current contents take in a long multiline string and uses regex to take out the numbers relevant to client.
+- Regex now takes out the number values out of the stats data and splits them into different columns, BUT as it turns out, numbers are combined with strings: e.g. not 420,000 but 420 thousand. Should adjust regex to take out this value as a whole. Then add another column that "translates" these strings in to usable ints/floats.
+- Values written as a string now correctly get translated to a number. '240 million' becomes 240,000,000.
+
 --- Sunday, June 6th, 2021 ---
 - Script outputs info to excel sheet.
 - Through using pyperclip the user can now copy a list of URL's from an excel file and the script will automatically read them from clipboard.
