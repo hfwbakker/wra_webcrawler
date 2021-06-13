@@ -1,16 +1,14 @@
-# import os
 import os.path
 import selenium
 from selenium import webdriver
 import time
-# from PIL import Image
-# import io
-# import requests
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import ElementClickInterceptedException
 import pandas as pd
 import pyperclip
 import re
+import openpyxl
+from openpyxl.utils.dataframe import dataframe_to_rows
 
 ###########################################################################
 ### SECTION 1: SCRAPING THE DATA AND PUTTING IT INTO A PANDAS DATAFRAME ###
@@ -32,7 +30,6 @@ def get_wra_info():
     domain_data         = "N/A"
     host_data           = "N/A"
     name_data           = "N/A"
-    # stats_data          = "N/A"
     daily_page_views    = "N/A"
     daily_visitors      = "N/A"
     site_rank           = "N/A"
@@ -45,19 +42,19 @@ def get_wra_info():
         if "daily page views |" in i.get_attribute('alt'):
             stats_data = i.get_attribute('alt').splitlines()
 
-            daily_page_views    = re.findall(r'\d+', stats_data[0])[0]
+            daily_page_views    = int(re.findall(r'\d+', stats_data[0])[0])
             if 'million' in stats_data[0]:
                 daily_page_views = int(daily_page_views) * 1000000
             if 'billion' in stats_data[0]:
                 daily_page_views = int(daily_page_views) * 1000000000
             
-            daily_visitors      = re.findall(r'\d+', stats_data[1])[0]
+            daily_visitors      = int(re.findall(r'\d+', stats_data[1])[0])
             if 'million' in stats_data[1]:
                 daily_visitors = int(daily_visitors) * 1000000
             if 'billion' in stats_data[1]:
                 daily_visitors = int(daily_visitors) * 1000000000
             
-            site_rank           = re.findall(r'\d+', stats_data[2])[0]
+            site_rank           = int(re.findall(r'\d+', stats_data[2])[0])
             
         
     new_row = {'url':"URL", 
@@ -73,12 +70,6 @@ def get_wra_info():
         count += 1
         
     return new_row
-
-    # except:
-    #     print("ERROR: Something caused an error. Reasons: WRA does not have info on this URL, or the page is taking too long to load.")
-    #     new_row = {'url':"N/A", 'domain': "N/A", 'host':"N/A", 'name':"N/A", 'stats':"N/A"}
-
-    #     return new_row
 
 # initialize and install / check webdriver
 driver = webdriver.Chrome(ChromeDriverManager().install())
@@ -104,15 +95,22 @@ driver.quit()
 ### SECTION 2: EDITING, FORMATTING, OUTPUTTING DF DATA ###
 ##########################################################
 
-# output files, while ensuring to not remove existing output files.
-filecount = 0
-while os.path.isfile(f"ouput/output{filecount}.xlsx") == True:
-    filecount += 1
-df.to_excel(f"output/output{filecount}.xlsx")
-print(f"Output to 'output/output{filecount}.xlsx'")
+wb = openpyxl.Workbook()
+ws = wb.active
 
-    filecount = 0
-    while os.path.isfile(f"output{filecount}.xlsx") == True:
-        filecount += 1
-    wb.save(f"output{filecount}.xlsx")
-    print(f"Saved to 'output{filecount}.xlsx")
+for r in dataframe_to_rows(df, index=True):
+	ws.append(r)
+
+ws.column_dimensions["B"].width = 5
+ws.column_dimensions["C"].width = 20
+ws.column_dimensions["D"].width = 10
+ws.column_dimensions["E"].width = 100
+ws.column_dimensions["F"].width = 15
+ws.column_dimensions["G"].width = 15
+ws.column_dimensions["H"].width = 10
+
+filecount = 0
+while os.path.isfile(f"output/output{filecount}.xlsx") == True:
+    filecount += 1
+wb.save(f"output/output{filecount}.xlsx")
+print(f"Saved to 'output/output{filecount}.xlsx")

@@ -11,12 +11,15 @@ PROJECT:
 
 
 NEXT UP:
-- Look at "excel_it" function in projects/python_webscraper/scraper_scripts/axios_scraper.py and create a similar function to neatly output pandas data into an excel sheet.
-- Is it possible to create some script that user can just double click that will automatically input the right commands into terminal? Like a Bash script? -> I think its called a shell script.
-- Clean up code.
+- Install on client's laptop.
 
 
 LOG:
+--- Sunday, June 13th, 2021 ---
+- Cleaned up code.
+- Openpyxl used to format and save excel output.
+- Script can now be executed by double clicking a .command file in finder.
+
 --- Thursday, June 10th, 2021 ---
 - Reinstalled all dependencies after having to completely reset (and repair) computer.
 - Created test_develop.py for creating code snippets to be implemented in to the main script. The current contents take in a long multiline string and uses regex to take out the numbers relevant to client.
